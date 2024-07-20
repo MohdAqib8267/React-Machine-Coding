@@ -1,0 +1,174 @@
+import React, { useState } from 'react';
+
+const FileExplorer = ({ initialData }) => {
+    const [expandedIds, setExpandedIds] = useState([]);
+    const [openModel, setOpenModel] = useState(false);
+    const [modelId, setModelId] = useState(null);
+    const [newFol, setNewFol] = useState("");
+    const [data, setData] = useState(initialData);
+ 
+    const [fileType,setFileType]=useState("");
+
+    const findItemsById = (node, id) => {
+        if (node.id === id) {
+            return node;
+        }
+        if (node.items) {
+            for (let item of node.items) {
+                const found = findItemsById(item, id);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    };
+
+    const handleExpand = (id) => {
+        if (expandedIds.includes(id)) {
+            setExpandedIds(expandedIds.filter(expandedId => expandedId !== id));
+        } else {
+            setExpandedIds([...expandedIds, id]);
+        }
+    };
+
+    const addFolder = (id) => {
+        const parentNode = findItemsById(data, id);
+        if (parentNode && parentNode.isFolder) {
+            const newFolder = {
+                id: Math.floor(Math.random() * 1000).toString(),
+                name: newFol,
+                isFolder: fileType==fileType==="folder"?true:false,
+                items: []
+            };
+            if(newFolder.name.length>0){
+                parentNode.items = [...(parentNode.items || []), newFolder];
+            }
+            setData({ ...data });
+            setNewFol("");
+        }
+    };
+
+    const folderSubmit = (e) => {
+        e.preventDefault();
+        addFolder(modelId); 
+        setOpenModel(!openModel);
+    };
+
+    const renderItems = (items, paddingLeft) => {
+        return items.map(item => (
+            <div key={item.id} style={{ paddingLeft: `${paddingLeft}px` }}>
+                {item.isFolder ? (
+                    <div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <div
+                                style={{
+                                    cursor: "pointer",
+                                    background: "lightGrey",
+                                    padding: "5px",
+                                    borderRadius: "5px",
+                                    marginTop: "1px",
+                                    width: "10rem"
+                                }}
+                                onClick={() => handleExpand(item.id)}
+                            >
+                                📁 {item.name}
+                            </div>
+                            <span style={{ textAlign: "right", marginLeft: "-50px" }}>
+                                <span onClick={() => {
+                                    setModelId(item.id);
+                                    setOpenModel(!openModel);
+                                    setFileType('folder');
+                                }}>📁</span>
+                                <span onClick={() => {
+                                    setModelId(item.id);
+                                    setOpenModel(!openModel);
+                                    setFileType('file');
+                                    }}>📄</span>
+                            </span>
+                        </div>
+                        {openModel && item.id === modelId && (
+                            <div style={{ marginLeft: "10px" }}>
+                                <input
+                                    type="text"
+                                    name="newFol"
+                                    value={newFol}
+                                    onChange={(e) => setNewFol(e.target.value)}
+                                />
+                                <button onClick={folderSubmit}>Submit</button>
+                            </div>
+                        )}
+                        {expandedIds.includes(item.id) && item.items && (
+                            <div>
+                                {renderItems(item.items, paddingLeft + 25)}
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div>
+                        <span>📄 {item.name}</span>
+                    </div>
+                )}
+            </div>
+        ));
+    };
+
+    return (
+        <div className="App">
+            <h2>File Explorer</h2>
+            <div>
+                {renderItems([data], 0)}
+            </div>
+        </div>
+    );
+};
+
+const initialData = {
+    id: "1",
+    name: 'root',
+    isFolder: true,
+    items: [
+        {
+            id: "2",
+            name: "public",
+            isFolder: true,
+            items: []
+        },
+        {
+            id: "3",
+            name: "src",
+            isFolder: true,
+            items: [
+                {
+                    id: "4",
+                    name: "App.js",
+                    isFolder: false,
+                },
+                {
+                    id: "5",
+                    name: "index.js",
+                    isFolder: false,
+                }
+            ]
+        },
+        {
+            id: "6",
+            name: "subscribe",
+            isFolder: true,
+            items: []
+        },
+        {
+            id: "7",
+            name: "package.json",
+            isFolder: false,
+        },
+    ]
+}; 
+
+export default function App() {
+    return (
+        <div className="App">
+            <FileExplorer initialData={initialData} />
+        </div>
+    );
+}
