@@ -1,5 +1,57 @@
 import React, { useState } from 'react';
 
+
+
+const initialData = {
+    id: "1",
+    name: 'root',
+    isFolder: true,
+    items: [
+        {
+            id: "2",
+            name: "public",
+            isFolder: true,
+            items: []
+        },
+        {
+            id: "3",
+            name: "src",
+            isFolder: true,
+            items: [
+                {
+                    id: "4",
+                    name: "App.js",
+                    isFolder: false,
+                },
+                {
+                    id: "5",
+                    name: "index.js",
+                    isFolder: false,
+                }
+            ]
+        },
+        {
+            id: "6",
+            name: "subscribe",
+            isFolder: true,
+            items: []
+        },
+        {
+            id: "7",
+            name: "package.json",
+            isFolder: false,
+        },
+    ]
+}; 
+
+export default function App() {
+    return (
+        <div className="App">
+            <FileExplorer initialData={initialData} />
+        </div>
+    );
+}
+
 const FileExplorer = ({ initialData }) => {
     const [expandedIds, setExpandedIds] = useState([]);
     const [openModel, setOpenModel] = useState(false);
@@ -114,7 +166,7 @@ const FileExplorer = ({ initialData }) => {
     };
 
     return (
-        <div className="App">
+        <div className="fileExplorer">
             <h2>File Explorer</h2>
             <div>
                 {renderItems([data], 0)}
@@ -122,53 +174,3 @@ const FileExplorer = ({ initialData }) => {
         </div>
     );
 };
-
-const initialData = {
-    id: "1",
-    name: 'root',
-    isFolder: true,
-    items: [
-        {
-            id: "2",
-            name: "public",
-            isFolder: true,
-            items: []
-        },
-        {
-            id: "3",
-            name: "src",
-            isFolder: true,
-            items: [
-                {
-                    id: "4",
-                    name: "App.js",
-                    isFolder: false,
-                },
-                {
-                    id: "5",
-                    name: "index.js",
-                    isFolder: false,
-                }
-            ]
-        },
-        {
-            id: "6",
-            name: "subscribe",
-            isFolder: true,
-            items: []
-        },
-        {
-            id: "7",
-            name: "package.json",
-            isFolder: false,
-        },
-    ]
-}; 
-
-export default function App() {
-    return (
-        <div className="App">
-            <FileExplorer initialData={initialData} />
-        </div>
-    );
-}
