@@ -90,7 +90,7 @@ const FileExplorer = ({ initialData }) => {
             const newFolder = {
                 id: Math.floor(Math.random() * 1000).toString(),
                 name: newFol,
-                isFolder: fileType==fileType==="folder"?true:false,
+                isFolder: fileType==="folder"?true:false,
                 items: []
             };
             if(newFolder.name.length>0){
